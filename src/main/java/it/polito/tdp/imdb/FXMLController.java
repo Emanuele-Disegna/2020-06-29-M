@@ -52,6 +52,8 @@ public class FXMLController {
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
+    	txtResult.clear();
+    	
     	model.creaGrafo(boxAnno.getValue());
     	
     	boxRegista.getItems().addAll(model.getVertici());
@@ -59,6 +61,8 @@ public class FXMLController {
 
     @FXML
     void doRegistiAdiacenti(ActionEvent event) {
+    	txtResult.clear();
+    	
     	for(RegistaAdiacente r : model.getRegistiAdiacenti(boxRegista.getValue())) {
     		txtResult.appendText(r+"");
     	}
@@ -66,7 +70,14 @@ public class FXMLController {
 
     @FXML
     void doRicorsione(ActionEvent event) {
-
+    	int c = Integer.parseInt(txtAttoriCondivisi.getText());
+    	txtResult.clear();
+    	
+    	for(Director d : model.cerca(c)) {
+    		txtResult.appendText(d+"\n");
+    	}
+    	
+    	txtResult.appendText(model.getSommaOttima()+"");
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete

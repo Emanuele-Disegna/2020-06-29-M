@@ -20,6 +20,7 @@ public class Model {
 	private Map<Integer, Director> idMap;
 	private Graph<Director, DefaultWeightedEdge> grafo;
 	private List<Adiacenza> adiacenze;
+	private List<Director> solOttima;
 	
 	public Model() {
 		dao = new ImdbDAO();
@@ -60,5 +61,53 @@ public class Model {
 		System.out.println(ret);
 		
 		return ret;
+	}
+	
+	public List<Director> cerca(int c) {
+		List<Director> parziale = new ArrayList<>();
+		solOttima = new ArrayList<>();
+		System.out.println(solOttima.size());
+		
+		cercaRicorsiva(parziale, c, grafo.vertexSet());
+		
+		System.out.println(solOttima);
+		
+		return solOttima;
+	}
+
+	private void cercaRicorsiva(List<Director> parziale, int c, Set<Director> possibili) {
+		if(parziale.size()>solOttima.size()) {	
+			System.out.println(parziale);
+			solOttima = new ArrayList<>(parziale);
+		}
+		
+		for(Director d : possibili) {
+			if(!parziale.contains(d)) {
+				parziale.add(d);
+				if(somma(parziale)<=c) {
+					cercaRicorsiva(parziale, c, Graphs.neighborSetOf(grafo, d));
+				}
+				parziale.remove(d);
+			}	
+		}
+	}
+
+	private int somma(List<Director> parziale) {
+		int somma = 0;
+		
+		if(parziale.size()==0 || parziale.size()==1) {
+			return 0;
+		}
+		
+		for(int i=0; i<parziale.size()-1; i++) {
+			if(grafo.containsEdge(parziale.get(i), parziale.get(i+1)))
+				somma += grafo.getEdgeWeight(grafo.getEdge(parziale.get(i), parziale.get(i+1)));
+		}
+		
+		return somma;
+	}
+	
+	public int getSommaOttima() {
+		return somma(solOttima);
 	}
 }
